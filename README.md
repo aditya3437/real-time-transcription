@@ -34,6 +34,8 @@ The API is available at <http://localhost:4000>; Whisper listens at <http://loca
 
 The defaults work with the included Compose file. For a standalone backend, copy `server/.env.example` to `server/.env` and set the MySQL credentials and `WHISPER_WS_URL`. `CLIENT_ORIGIN` controls the allowed browser origin.
 
+For the deployed frontend and backend, set the frontend's Vercel environment variable `VITE_API_URL` to `https://real-time-transcription-ahgx.vercel.app/api` and the backend's `CLIENT_ORIGIN` to `https://real-time-transcription-kohl.vercel.app`. The frontend defaults to the deployed API in production; `VITE_API_URL` can override it. Live transcription uses the same backend URL for its WebSocket connection.
+
 The browser converts microphone input to mono, signed 16-bit PCM at 16 kHz before streaming it. This is the live endpoint format supported by faster-whisper-server. Automatic language detection is used so multilingual speech, including Hindi-English code-switching, can be handled without choosing a single language in advance. The Compose setup raises the upstream inactivity window to 60 seconds so short pauses do not immediately end a live session. Recognition quality depends on the selected Whisper model and audio conditions.
 
 ## API

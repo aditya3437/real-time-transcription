@@ -1,7 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { mergeTranscript, parseTranscript } from '../utils/transcription.js';
 
-const API = import.meta.env.VITE_API_URL || '/api';
+const API = (import.meta.env.VITE_API_URL || (
+  import.meta.env.DEV ? '/api' : 'https://real-time-transcription-ahgx.vercel.app/api'
+)).replace(/\/$/, '');
+
+function getLiveSocketUrl() {
+  const url = new URL(`${API}/live`, window.location.origin);
+  url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+  return url.toString();
+}
 
 export function useTranscriptionWorkspace() {
   const [items, setItems] = useState([]);
@@ -66,8 +74,7 @@ export function useTranscriptionWorkspace() {
         audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true }
       });
       streamRef.current = stream;
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const socket = new WebSocket(`${protocol}//${window.location.host}/api/live`);
+      const socket = new WebSocket(getLiveSocketUrl());
       socket.binaryType = 'arraybuffer'; socketRef.current = socket;
       socket.onmessage = event => {
         try {
@@ -79,7 +86,7 @@ export function useTranscriptionWorkspace() {
           }
         } catch (error) { setNotice(error.message); }
       };
-      socket.onerror = () => setNotice('Could not reach the local Whisper service. Check that it is running.');
+      socket.onerror = () => setNotice('Could not reach the transcription service. Check that the backend and Whisper service are running.');
       await new Promise((resolve, reject) => {
         const timeout = window.setTimeout(() => reject(new Error('The transcription service did not connect in time.')), 8000);
         socket.onopen = () => { window.clearTimeout(timeout); resolve(); };
