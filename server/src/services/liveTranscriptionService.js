@@ -7,7 +7,7 @@ export function attachLiveTranscription(server) {
   server.on('upgrade', (req, socket, head) => {
     const url = new URL(req.url || '/', 'http://localhost');
     if (url.pathname !== '/api/live') return socket.destroy();
-    if (req.headers.origin && req.headers.origin !== env.clientOrigin) return socket.destroy();
+    if (req.headers.origin && !env.clientOrigins.includes(req.headers.origin)) return socket.destroy();
 
     liveSockets.handleUpgrade(req, socket, head, client => {
       liveSockets.emit('connection', client);

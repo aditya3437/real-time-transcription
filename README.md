@@ -34,7 +34,7 @@ The API is available at <http://localhost:4000>; Whisper listens at <http://loca
 
 The defaults work with the included Compose file. For a standalone backend, copy `server/.env.example` to `server/.env` and set the MySQL credentials and `WHISPER_WS_URL`. `CLIENT_ORIGIN` controls the allowed browser origin.
 
-For the deployed frontend and backend, set the frontend's Vercel environment variable `VITE_API_URL` to `https://real-time-transcription-ahgx.vercel.app/api` and the backend's `CLIENT_ORIGIN` to `https://real-time-transcription-kohl.vercel.app`. The frontend defaults to the deployed API in production; `VITE_API_URL` can override it. Live transcription uses the same backend URL for its WebSocket connection.
+For the deployed frontend and backend, set the frontend's Vercel environment variable `VITE_API_URL` to `https://real-time-transcription-ahgx.vercel.app/api` and the backend's `CLIENT_ORIGIN` to `https://real-time-transcription-kohl.vercel.app`. `CLIENT_ORIGIN` accepts a comma-separated list of allowed origins if you also need Vercel preview URLs. The frontend defaults to the deployed API in production; `VITE_API_URL` can override it. Live transcription uses the same backend URL for its WebSocket connection.
 
 When deploying the backend to Vercel, set its Root Directory to `server` and configure the MySQL environment variables (`MYSQL_HOST`, `MYSQL_PORT`, `MYSQL_USER`, `MYSQL_PASSWORD`, and `MYSQL_DATABASE`) for a reachable external MySQL database. The Vercel entry point exports the Express app for HTTP API routes. Vercel Functions do not support this app's persistent live WebSocket route (`/api/live`); host the backend on a WebSocket-capable Node.js service (and point `VITE_API_URL` at that service) to use live transcription.
 
