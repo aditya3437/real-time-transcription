@@ -1,0 +1,31 @@
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-speechroot}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-speech_to_text}
+      MYSQL_USER: ${MYSQL_USER:-speechapp}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-speechpass}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./server/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p\"$${MYSQL_ROOT_PASSWORD}\" --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  whisper:
+    image: fedirz/faster-whisper-server:latest-cpu
+    restart: unless-stopped
+    environment:
+      INACTIVITY_WINDOW_SECONDS: 60
+    ports:
+      - "8000:8000"
+    volumes:
+      - whisper_cache:/root/.cache/huggingface
+volumes:
+  mysql_data:
+  whisper_cache:
