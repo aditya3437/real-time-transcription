@@ -36,6 +36,8 @@ The defaults work with the included Compose file. For a standalone backend, copy
 
 For the deployed frontend and backend, set the frontend's Vercel environment variable `VITE_API_URL` to `https://real-time-transcription-ahgx.vercel.app/api` and the backend's `CLIENT_ORIGIN` to `https://real-time-transcription-kohl.vercel.app`. The frontend defaults to the deployed API in production; `VITE_API_URL` can override it. Live transcription uses the same backend URL for its WebSocket connection.
 
+When deploying the backend to Vercel, set its Root Directory to `server` and configure the MySQL environment variables (`MYSQL_HOST`, `MYSQL_PORT`, `MYSQL_USER`, `MYSQL_PASSWORD`, and `MYSQL_DATABASE`) for a reachable external MySQL database. The Vercel entry point exports the Express app for HTTP API routes. Vercel Functions do not support this app's persistent live WebSocket route (`/api/live`); host the backend on a WebSocket-capable Node.js service (and point `VITE_API_URL` at that service) to use live transcription.
+
 The browser converts microphone input to mono, signed 16-bit PCM at 16 kHz before streaming it. This is the live endpoint format supported by faster-whisper-server. Automatic language detection is used so multilingual speech, including Hindi-English code-switching, can be handled without choosing a single language in advance. The Compose setup raises the upstream inactivity window to 60 seconds so short pauses do not immediately end a live session. Recognition quality depends on the selected Whisper model and audio conditions.
 
 ## API
